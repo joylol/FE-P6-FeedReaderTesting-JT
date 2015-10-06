@@ -65,9 +65,9 @@ $(function() {
         it('should change the visibility of the menu when the menu icon is clicked', function() {
             var body = $('body');
             var menuIcon = $('.menu-icon-link');
-            menuIcon.trigger('click');
+            menuIcon.trigger('click'); //After the menu is clicked once, the menu should display.
             expect(body.hasClass('menu-hidden')).toBe(false);
-            menuIcon.trigger('click');
+            menuIcon.trigger('click'); //After the menu is clicked a second time, the menue should hide.
             expect(body.hasClass('menu-hidden')).toBe(true);
         });
     });
@@ -86,7 +86,7 @@ $(function() {
         });
         it('should have at least an .entry element in the .feed containter', function(done) {
             var container = $('.feed');
-            var entries = container.contents().find('.entry');
+            var entries = container.find('.entry');
             var entriesLen = entries.length;
             expect(entriesLen >= 1).toBe(true);
             done();
@@ -98,20 +98,25 @@ $(function() {
          * by the loadFeed function that the content actually changes.
          * loadFeed() is asynchronous.
          */
-         
-        /* Since the previous test loads allFeeds[0], to see if content changes when
-         * a new feed is loaded, allFeeds[1] is used. 
+        //Create variables that can be used through out this test suite.
+        var initialFeed; 
+        var newFeed;
+        /* Obtain html contents of loadFeed[0] and loadFeed[0] and set each
+         * respectively to initialFeed and newFeed.
          */
         beforeEach(function(done) {
-            loadFeed(1, function() {
-                done();
+            $('.feed').empty();
+            loadFeed(0, function() {
+                initialFeed = $('.feed').html();
+                loadFeed(1, function() {
+                    newFeed = $('.feed').html();
+                    done();
+                });
             });
         });
-        /* Expect allFeeds[1].title to be new content title in the html .header-title */
+        /* Expect intitialFeed to not be newFeed contents.*/
         it('should change content when a new feed is loaded', function(done) {
-            var titleName = $('.header-title').text();
-            var feedName = allFeeds[1].name;
-            expect(titleName == feedName).toBe(true);
+            expect(initialFeed == newFeed).toBe(false);
             done();
         });
     });
